@@ -247,9 +247,9 @@ class CheckoutSerializer(serializers.Serializer, OrderPlacementMixin):
     guest_email = serializers.EmailField(allow_blank=True, required=False)
     total = serializers.DecimalField(decimal_places=2, max_digits=12, required=False)
     shipping_method_code = serializers.CharField(max_length=128, required=False)
-    shipping_charge = PriceSerializer(many=False, required=False)
-    shipping_address = ShippingAddressSerializer(many=False, required=False)
-    billing_address = BillingAddressSerializer(many=False, required=False)
+    shipping_charge = PriceSerializer(many=False, required=False, allow_null=True)
+    shipping_address = ShippingAddressSerializer(many=False, required=False, allow_null=True)
+    billing_address = BillingAddressSerializer(many=False, required=False, allow_null=True)
 
     def get_initial_order_status(self, basket):
         return overridable("OSCARAPI_INITIAL_ORDER_STATUS", default="new")
