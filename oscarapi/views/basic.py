@@ -3,7 +3,7 @@ import functools
 
 from oscar.core.loading import get_class, get_model
 
-from rest_framework import generics
+from rest_framework import exceptions, generics
 
 from oscarapi import permissions
 from oscarapi.basket.operations import (
@@ -88,7 +88,10 @@ class BasketDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = editable_baskets()
 
     def get_object(self):
-        basket = super(BasketDetail, self).get_object()
+        try:
+            basket = super(BasketDetail, self).get_object()
+        except OverflowError as e:
+            raise exceptions.ValidationError(str(e))
         return assign_basket_strategy(basket, self.request)
 
 

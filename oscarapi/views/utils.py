@@ -51,6 +51,10 @@ class BasketPermissionMixin(object):
     def check_basket_permission(self, request, basket_pk=None, basket=None):
         "Check if the user may access this basket"
         if basket is None:
-            basket = generics.get_object_or_404(Basket.objects, pk=basket_pk)
+            try:
+                basket = generics.get_object_or_404(Basket.objects, pk=basket_pk)
+            except OverflowError as e:
+                raise exceptions.ValidationError(str(e))
+
         self.check_object_permissions(request, basket)
         return basket

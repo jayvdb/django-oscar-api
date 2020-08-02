@@ -320,7 +320,10 @@ class BasketLineDetail(generics.RetrieveUpdateDestroyAPIView):
 
     def get_queryset(self):
         basket_pk = self.kwargs.get("basket_pk")
-        basket = get_object_or_404(operations.editable_baskets(), pk=basket_pk)
+        try:
+            basket = get_object_or_404(operations.editable_baskets(), pk=basket_pk)
+        except OverflowError as e:
+            raise exceptions.ValidationError(str(e))
         prepped_basket = operations.prepare_basket(basket, self.request)
         if operations.request_allows_access_to_basket(self.request, prepped_basket):
             return prepped_basket.all_lines()
